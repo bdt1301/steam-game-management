@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Details</title>
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link
+	href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+	rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+
+</head>
+<body>
+	<div th:replace="~{fragments/header :: header}"></div>
+	<main class="container">
+		<h1 class="page-title">User Information</h1>
+
+		<!-- User Details Section -->
+		<div class="card">
+			<div class="card-body">
+				<img th:src="${user.avatarUrl}" th:alt="${user.fullName}" />
+				<h3 th:text="${user.fullName}"></h3>
+				<p>
+					<strong>Username:</strong>
+					<span th:text="${user.username}"></span>
+					<br>
+					<strong>Email:</strong>
+					<span th:text="${user.email}"></span>
+				</p>
+
+				<button type="button" class="btn btn-info" data-toggle="modal"
+					data-target="#editProfileModal">Edit Profile</button>
+				<button type="button" class="btn btn-warning" data-toggle="modal"
+					data-target="#changePasswordModal">Change Password</button>
+			</div>
+		</div>
+
+		<div sec:authorize="hasRole('USER')">
+			<h2 class="list-title">Favorite Games List</h2>
+
+			<div class="toolbar">
+				<div class="search-bar">
+					<div
+						th:replace="~{fragments/filter-game-details.html :: search-details}"></div>
+					<script src="/js/filter-game-details.js"></script>
+
+					<div th:replace="~{fragments/filter-name :: search-name}"></div>
+					<script src="/js/filter-name.js"></script>
+				</div>
+			</div>
+
+			<table id="games-table" class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th onclick="sortTable(0)">
+							Game
+							<span class="sort-icon"></span>
+						</th>
+						<th onclick="sortTable(1)">
+							Release Date
+							<span class="sort-icon"></span>
+						</th>
+						<th onclick="sortTable(2)">
+							Price
+							<span class="sort-icon"></span>
+						</th>
+						<th onclick="sortTable(3)">
+							Peak Players
+							<span class="sort-icon"></span>
+						</th>
+						<th class="unsort-column">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="game : ${user.favoriteGames}">
+						<td>
+							<a class="item-link"
+								th:href="@{/games/details/{id}(id=${game.appId})}">
+								<img th:src="${game.appImage}" th:alt="${game.title}"
+									class="image">
+								<strong th:text="${game.title}"></strong>
+							</a>
+						</td>
+						<td th:text="${#dates.format(game.releaseDate, 'dd/MM/yyyy')}"></td>
+						<td th:text="${game.price == 0 ? 'Free' : game.price}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(game.peakPlayers, 0, 'COMMA' , 0, 'POINT')}"></td>
+						<td hidden>
+							<span th:each="category, iterStat : ${game.categories}">
+								<span th:text="${category.categoryName}"></span>
+								<span th:if="${!iterStat.last}">, </span>
+							</span>
+						</td>
+						<td>
+							<form th:action="@{/user/removeFavoriteGame}" method="post">
+								<input type="hidden" name="gameId" th:value="${game.appId}" />
+								<button type="submit" class="btn btn-sm btn-danger"
+									th:if="${#lists.contains(user.favoriteGames, game)}">
+									Remove</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<script src="/js/sort.js"></script>
+
+		<div th:replace="~{fragments/alert :: alert-bar}"></div>
+		<script src="/js/alert.js"></script>
+
+		<div th:replace="~{fragments/pagination :: pagination-controls}"></div>
+		<script src="/js/pagination.js"></script>
+	</main>
+
+	<!-- Modal Edit Profile -->
+	<div class="modal fade" id="editProfileModal" tabindex="-1"
+		role="dialog" aria-labelledby="editProfileLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editProfileLabel">Edit Profile</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form th:action="@{/user/update-profile}" method="post">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="fullName">Full Name:</label>
+							<input type="text" id="fullName" name="fullName"
+								class="form-control" th:value="${user.fullName}" required>
+						</div>
+
+						<div class="form-group">
+							<label for="email">Email:</label>
+							<input type="email" id="email" name="email" class="form-control"
+								th:value="${user.email}" required>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-primary">Save
+							Changes</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal for Change Password -->
+	<div class="modal fade" id="changePasswordModal" tabindex="-1"
+		role="dialog" aria-labelledby="changePasswordLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="changePasswordLabel">Change
+						Password</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form th:action="@{/user/change-password}" method="post">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="oldPassword">Old Password:</label>
+							<input type="password" id="oldPassword" name="oldPassword"
+								class="form-control" required>
+						</div>
+						<div class="form-group">
+							<label for="newPassword">New Password:</label>
+							<input type="password" id="newPassword" name="newPassword"
+								class="form-control" required>
+						</div>
+						<div class="form-group">
+							<label for="confirmPassword">Confirm New Password:</label>
+							<input type="password" id="confirmPassword"
+								name="confirmPassword" class="form-control" required>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">Hủy</button>
+						<button type="submit" class="btn btn-warning"
+							onclick="return confirm('Are you sure about that?');">Change</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+	<!-- Custom JS -->
+	<script>
+		$(document).ready(function() {
+			$('.select2').select2({
+				allowClear : true,
+				placeholder : 'Select options...'
+			});
+		});
+	</script>
+</body>
+</html>

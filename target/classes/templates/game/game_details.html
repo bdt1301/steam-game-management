@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Details</title>
+
+<!-- Fonts -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+
+<!-- Styles -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+	<!-- Header -->
+	<div th:replace="~{fragments/header :: header}"></div>
+	<script src="/js/navigation.js"></script>
+
+	<!-- Main Content -->
+	<main class="container">
+		<h1 class="page-title">Game Details</h1>
+
+		<!-- Game Details Table -->
+		<table class="table-details table table-bordered table-striped">
+			<tr>
+				<th>App ID</th>
+				<td th:text="${game.appId}"></td>
+				<td rowspan="5" class="game-thumbnail" id="gameImage">
+					<img th:src="${game.appImage}" th:alt="${game.title}"
+						class="img-fluid rounded">
+					<div class="see-images-overlay">
+						<p class="see-images-text">See Images</p>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th>Title</th>
+				<td th:text="${game.title}"></td>
+			</tr>
+			<tr>
+				<th>Release Date</th>
+				<td th:text="${#dates.format(game.releaseDate, 'dd/MM/yyyy')}"></td>
+			</tr>
+			<tr>
+				<th>Price</th>
+				<td th:text="${game.price == 0 ? 'Free' : '$' + game.price}"></td>
+			</tr>
+			<tr>
+				<th>Peak Players</th>
+				<td
+					th:text="${#numbers.formatDecimal(game.peakPlayers, 0, 'COMMA', 0, 'POINT')}"></td>
+			</tr>
+			<tr>
+				<th>Publisher</th>
+				<td colspan="2">
+					<a
+						th:href="@{/publishers/details/{id}(id=${game.publisher.publisherId})}"
+						th:text="${game.publisher.publisherName}"></a>
+				</td>
+			</tr>
+			<tr>
+				<th>Categories</th>
+				<td colspan="2">
+					<span th:each="category, iterStat : ${game.categories}">
+						<a
+							th:href="@{/categories/details/{id}(id=${category.categoryId})}"
+							th:text="${category.categoryName}"></a>
+						<span th:if="${!iterStat.last}">, </span>
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<th>About</th>
+				<td colspan="2" th:text="${game.aboutDescription}"></td>
+			</tr>
+		</table>
+
+		<!-- Action Buttons -->
+		<div sec:authorize="hasRole('ADMIN')" class="action-details">
+			<a th:href="@{/games/edit/{id}(id=${game.appId})}"
+				class="btn btn-warning"> Edit </a>
+			<a th:href="@{/games/delete/{id}(id=${game.appId})}"
+				class="btn btn-danger"
+				onclick="return confirm('Are you sure about that?');"> Delete </a>
+		</div>
+
+		<div sec:authorize="hasRole('USER')" class="action-details">
+			<!-- Add to Favorites Button -->
+			<form th:action="@{/user/addFavoriteGame}" method="post">
+				<input type="hidden" name="gameId" th:value="${game.appId}" />
+				<button type="submit" class="btn btn-success"
+					th:if="${!#lists.contains(user.favoriteGames, game)}">Add
+					to Favorites</button>
+			</form>
+
+			<!-- Remove from Favorites Button -->
+			<form th:action="@{/user/removeFavoriteGame}" method="post">
+				<input type="hidden" name="gameId" th:value="${game.appId}" />
+				<button type="submit" class="btn btn-danger"
+					th:if="${#lists.contains(user.favoriteGames, game)}">
+					Remove from Favorites</button>
+			</form>
+		</div>
+
+		<div hidden id="appImages" th:text="${game.appImage}"></div>
+		<div th:replace="~{fragments/slideshow-images :: slideshow-images}"></div>
+
+		<div th:replace="~{fragments/alert :: alert-bar}"></div>
+		<script src="/js/alert.js"></script>
+	</main>
+
+	<!-- Footer -->
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+	<script src="/js/slideshow-images.js"></script>
+</body>
+
+</html>

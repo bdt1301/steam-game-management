@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>List of Publishers</title>
+
+<!-- Fonts -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+
+<!-- Styles -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+	<div th:replace="~{fragments/header :: header}"></div>
+	<script src="/js/navigation.js"></script>
+
+	<main class="container">
+		<h1 class="page-title">List of Publishers</h1>
+
+		<div class="toolbar">
+			<a sec:authorize="hasRole('ADMIN')" href="/publishers/new"
+				class="btn btn-primary">Add New Publisher</a>
+
+			<div class="search-bar">
+				<div th:replace="~{fragments/filter-name :: search-name}"></div>
+				<script src="/js/filter-name.js"></script>
+			</div>
+		</div>
+
+		<table id="publishers-table" class="table table-hover table-bordered">
+			<thead>
+				<tr>
+					<th onclick="sortTable(0)">
+						Publisher
+						<span class="sort-icon"></span>
+					</th>
+					<th onclick="sortTable(1)">
+						Products
+						<span class="sort-icon"></span>
+					</th>
+					<th onclick="sortTable(2)">
+						Featured Game
+						<span class="sort-icon"></span>
+					</th>
+					<th sec:authorize="hasRole('ADMIN')" class="unsort-column">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="publisher : ${publishers}">
+					<td>
+						<a class="item-link"
+							th:href="@{/publishers/details/{id}(id=${publisher.publisherId})}">
+							<img th:src="${publisher.publisherImage}"
+								th:alt="${publisher.publisherName}" class="image">
+							<strong th:text="${publisher.publisherName}"></strong>
+						</a>
+					</td>
+					<td th:text="${publisher.productQuantity}"></td>
+					<td>
+						<a th:if="${publisher.featuredGame != null}"
+							th:href="@{/games/details/{id}(id=${publisher.featuredGame.appId})}"
+							th:text="${publisher.featuredGame.title}"></a>
+					</td>
+					<td sec:authorize="hasRole('ADMIN')">
+						<a th:href="@{/publishers/edit/{id}(id=${publisher.publisherId})}"
+							class="btn btn-sm btn-warning">Edit</a>
+						<a
+							th:href="@{/publishers/delete/{id}(id=${publisher.publisherId})}"
+							class="btn btn-sm btn-danger"
+							onclick="return confirm('Are you sure about that?');">Delete</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<script src="/js/sort.js"></script>
+
+		<div th:replace="~{fragments/alert :: alert-bar}"></div>
+		<script src="/js/alert.js"></script>
+
+		<div th:replace="~{fragments/pagination :: pagination-controls}"></div>
+		<script src="/js/pagination.js"></script>
+	</main>
+
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

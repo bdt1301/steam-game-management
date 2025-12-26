@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Category Details</title>
+
+<!-- Fonts -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+
+<!-- Styles -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+<link rel="stylesheet" href="/css/styles.css" />
+
+</head>
+
+<body>
+	<div th:replace="~{fragments/header :: header}"></div>
+	<script src="/js/navigation.js"></script>
+
+	<main class="container">
+		<h1 class="page-title">Category Details</h1>
+
+		<div class="card">
+			<div class="card-body">
+				<img th:src="${category.categoryImage}"
+					th:alt="${category.categoryName}">
+				<h3 th:text="${category.categoryName}"></h3>
+				<p th:text="${category.categoryDescription}"></p>
+				<div sec:authorize="hasRole('ADMIN')" class="action-details">
+					<a th:href="@{/categories/edit/{id}(id=${category.categoryId})}"
+						class="btn btn-warning">Edit</a>
+					<a th:href="@{/categories/delete/{id}(id=${category.categoryId})}"
+						class="btn btn-danger"
+						onclick="return confirm('Are you sure about that?');">Delete</a>
+				</div>
+			</div>
+		</div>
+
+		<h2 class="list-title">
+			List of Games:
+			<span th:text="${category.productQuantity}"></span>
+			products
+		</h2>
+
+		<div class="toolbar category-toolbar">
+			<form sec:authorize="hasRole('ADMIN')"
+				th:action="@{/categories/addGames/{id}(id=${category.categoryId})}"
+				th:object="${category}" method="post" class="form-inline">
+				<label>Select Games:</label>
+				<select name="gameIds" multiple class="form-control select2"
+					required>
+					<option th:each="game : ${allGames}" th:value="${game.appId}"
+						th:text="${game.title}"></option>
+				</select>
+				<button type="submit" class="btn btn-primary">Add</button>
+			</form>
+
+			<div class="search-bar">
+				<div
+					th:replace="~{fragments/filter-game-details.html :: search-details}"></div>
+				<script src="/js/filter-game-details.js"></script>
+
+				<div th:replace="~{fragments/filter-name :: search-name}"></div>
+				<script src="/js/filter-name.js"></script>
+			</div>
+		</div>
+
+		<table id="games-table" class="table table-hover table-bordered">
+			<thead>
+				<tr>
+					<th onclick="sortTable(0)">
+						Game
+						<span class="sort-icon"></span>
+					</th>
+					<th onclick="sortTable(1)">
+						Release Date
+						<span class="sort-icon"></span>
+					</th>
+					<th onclick="sortTable(2)">
+						Price
+						<span class="sort-icon"></span>
+					</th>
+					<th onclick="sortTable(3)">
+						Peak Players
+						<span class="sort-icon"></span>
+					</th>
+					<th sec:authorize="hasRole('ADMIN')" class="unsort-column">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="game : ${games}">
+					<td>
+						<a th:href="@{/games/details/{id}(id=${game.appId})}"
+							class="item-link">
+							<img th:src="${game.appImage}" th:alt="${game.title}"
+								class="image">
+							<strong th:text="${game.title}"></strong>
+						</a>
+					</td>
+					<td th:text="${#dates.format(game.releaseDate, 'dd/MM/yyyy')}"></td>
+					<td th:text="${game.price == 0 ? 'Free' : '$' + game.price}"></td>
+					<td
+						th:text="${#numbers.formatDecimal(game.peakPlayers, 0, 'COMMA' , 0, 'POINT')}"></td>
+					<td hidden>
+						<span th:each="category, iterStat : ${game.categories}">
+							<span th:text="${category.categoryName}"></span>
+							<span th:if="${!iterStat.last}">, </span>
+						</span>
+					</td>
+					<td sec:authorize="hasRole('ADMIN')">
+						<a th:href="@{/games/edit/{id}(id=${game.appId})}"
+							class="btn btn-sm btn-warning">Edit</a>
+						<a
+							th:href="@{/categories/removeGame(categoryId=${category.categoryId},appId=${game.appId})}"
+							class="btn btn-sm btn-danger"
+							onclick="return confirm('Are you sure about that?');">Remove</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<script src="/js/sort.js"></script>
+
+		<div th:replace="~{fragments/alert :: alert-bar}"></div>
+		<script src="/js/alert.js"></script>
+
+		<div th:insert="~{fragments/pagination :: pagination-controls}"></div>
+		<script src="/js/pagination.js"></script>
+	</main>
+
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- Thêm Bootstrap JS và jQuery -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('.select2').select2({
+				allowClear : true,
+				placeholder : 'Choose anything...'
+			});
+		});
+	</script>
+</body>
+
+</html>

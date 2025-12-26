@@ -1,0 +1,78 @@
+<div th:fragment="search-details">
+
+	<!-- Nút mở modal -->
+	<button type="button" class="btn btn-primary" data-toggle="modal"
+		data-target="#filterModal">
+		<i class="fa-solid fa-filter"></i>
+	</button>
+
+	<!-- Modal -->
+	<div class="modal fade" id="filterModal" tabindex="-1" role="dialog"
+		aria-labelledby="filterModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="filterModalLabel">Filter Options</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<!-- Tìm kiếm theo tên game -->
+					<label for="search-game-name">Name:</label>
+					<input type="text" id="search-game-name"
+						placeholder="Search by name..." class="form-control name-filter" />
+
+					<label for="categories-filter">Categories:</label>
+					<div class="categories-filter">
+						<select id="categories-filter" class="form-control select2"
+							multiple>
+							<option th:each="category : ${categories}"
+								th:value="${category.categoryName}"
+								th:text="${category.categoryName}"></option>
+						</select>
+					</div>
+
+					<!-- Lọc theo giá -->
+					<label>Price:</label>
+					<div class="price-filter">
+						<input type="number" id="min-price" placeholder="Min Price"
+							class="form-control" min="0" max="1000" />
+						<i class="from-to-icon fa-solid fa-arrow-right"></i>
+						<input type="number" id="max-price" placeholder="Max Price"
+							class="form-control" min="0" max="1000" />
+					</div>
+
+					<!-- Lọc theo ngày phát hành -->
+					<label>Date:</label>
+					<div class="date-filter">
+						<input type="number" id="start-year" placeholder="Start Year"
+							class="form-control" min="1900" max="2100" />
+						<i class="from-to-icon fa-solid fa-arrow-right"></i>
+						<input type="number" id="end-year" placeholder="End Year"
+							class="form-control" min="1900" max="2100" />
+					</div>
+
+					<!-- Lọc theo số người chơi đỉnh điểm -->
+					<label>Peak Players:</label>
+					<div class="players-filter">
+						<input type="number" id="min-players"
+							placeholder="Min Peak Players" class="form-control" />
+						<i class="from-to-icon fa-solid fa-arrow-right"></i>
+						<input type="number" id="max-players"
+							placeholder="Max Peak Players" class="form-control" />
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						onclick="clearFilters()">Clear</button>
+					<button type="button" class="btn btn-primary"
+						onclick="filterList()" data-dismiss="modal">Apply</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add/Edit Game</title>
+
+<!-- Bootstrap CSS -->
+<link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!-- Select2 CSS -->
+<link
+	href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+	rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+	<div th:replace="~{fragments/header :: header}"></div>
+	<script src="/js/navigation.js"></script>
+
+	<main class="container">
+		<h1 class="page-title">Add/Edit Game</h1>
+
+		<form
+			th:action="${game.appId == null} ? @{/games} : @{/games/{id}(id=${game.appId})}"
+			th:object="${game}" method="post">
+
+			<div class="form-group">
+				<label for="appId">App ID</label>
+				<input type="number" id="appId" th:field="*{appId}"
+					th:disabled="${game.appId != null}" class="form-control"
+					placeholder="Enter ID" required />
+			</div>
+
+			<div class="form-group">
+				<label for="title">Title</label>
+				<input type="text" id="title" th:field="*{title}"
+					class="form-control" placeholder="Enter title" required />
+				<p th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
+					class="text-danger"></p>
+			</div>
+
+			<div class="form-group">
+				<label for="releaseDate">Release Date</label>
+				<input type="date" id="releaseDate" th:field="*{releaseDate}"
+					class="form-control" />
+			</div>
+
+			<div class="form-group">
+				<label for="price">Price</label>
+				<input type="number" id="price" th:field="*{price}"
+					class="form-control" step="0.01" required />
+			</div>
+
+			<div class="form-group">
+				<label for="peakPlayers">Peak Players</label>
+				<input type="number" id="peakPlayers" th:field="*{peakPlayers}"
+					class="form-control" step="1" required />
+			</div>
+
+			<div class="form-group">
+				<label for="publisher">Publisher</label>
+				<select id="publisher" th:field="*{publisher}"
+					class="form-control select2" required>
+					<option value="" disabled selected>Select a publisher</option>
+					<option th:each="publisher : ${publishers}"
+						th:value="${publisher.publisherId}"
+						th:text="${publisher.publisherName}"></option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label for="categories">Categories</label>
+				<select id="categories" name="categoryIds"
+					class="form-control select2" multiple>
+					<option value="" disabled>Select categories</option>
+					<option th:each="category : ${categories}"
+						th:value="${category.categoryId}"
+						th:text="${category.categoryName}"
+						th:selected="${existingCategories.contains(category.categoryId)}"></option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label for="aboutDescription">About</label>
+				<textarea id="aboutDescription" th:field="*{aboutDescription}"
+					class="form-control" placeholder="Enter game description"></textarea>
+			</div>
+
+			<div class="form-group">
+				<label for="appImage">App Images</label>
+				<div id="imageUrlInputGroup" class="d-flex mb-2">
+					<input type="text" id="imageUrl" class="form-control"
+						placeholder="Enter image URL" />
+					<button type="button" id="addImageBtn" class="btn btn-success ml-2">Add</button>
+				</div>
+				<input type="hidden" id="appImage" th:field="*{appImage}"
+					class="form-control" placeholder="Enter image URL" />
+				<div id="imagePreviewList" class="image-preview-container"></div>
+			</div>
+
+			<button type="submit" class="btn btn-primary btn-block"
+				onclick="return confirm('Are you sure about that?');">Save</button>
+		</form>
+	</main>
+
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- JS Libraries -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+	<!-- Custom JS -->
+	<script src="/js/add-edit-game.js"></script>
+</body>
+</html>
