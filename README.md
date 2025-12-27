@@ -5,7 +5,7 @@
 This project was developed and tested using the following **personal development environment**:
 
 ### 🔧 Development Environment
-- Java Development Kit (JDK) **21.0.4**
+- Java Development Kit (JDK) **17.0.12**
 - Apache Maven **3.9.9**
 - Build & Run via Maven/Command Line (jar)
 
