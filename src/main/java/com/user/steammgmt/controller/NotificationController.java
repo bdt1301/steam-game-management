@@ -1,7 +1,10 @@
 package com.user.steammgmt.controller;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,41 +26,56 @@ public class NotificationController {
 	private final NotificationService notificationService;
 	private final NavigationService navigationService;
 
-	public NotificationController(UserService userService, NotificationService notificationService, NavigationService navigationService) {
+	public NotificationController(UserService userService, NotificationService notificationService,
+			NavigationService navigationService) {
 		this.userService = userService;
 		this.notificationService = notificationService;
 		this.navigationService = navigationService;
 	}
 
+	// Hiển thị danh sách notifications
 	@GetMapping
-	public String listNotifications(Model model, HttpSession session) {
-		String role = (String) session.getAttribute("role");
-		String username = (String) session.getAttribute("username");
-		if (username != null && "USER".equals(role)) {
-			User user = userService.getUserByUsername(username);
-			model.addAttribute("notifications", notificationService.getNotifications(user));
+	public String listNotifications(Model model, HttpSession session,
+			@AuthenticationPrincipal UserDetails userDetails) {
+
+		if (userDetails != null) {
+			User user = userService.getUserByUsername(userDetails.getUsername());
+			List<Notification> notifications = notificationService.getNotifications(user);
+			model.addAttribute("notifications", notifications);
+		} else {
+			model.addAttribute("notifications", Collections.emptyList());
 		}
-		return "/user/notifications";
+
+		return "user/notifications";
 	}
-	
+
+	// Đánh dấu tất cả là đã đọc
 	@GetMapping("/markAllRead")
-	public String markAllRead(HttpSession session, HttpServletRequest request) {
+	public String markAllRead(HttpSession session, HttpServletRequest request,
+			@AuthenticationPrincipal UserDetails userDetails) {
 		navigationService.saveURL(session, "previousURL", request.getHeader("Referer"));
-		String role = (String) session.getAttribute("role");
-		String username = (String) session.getAttribute("username");
-		if (username != null && "USER".equals(role)) {
-			User user = userService.getUserByUsername(username);
+		if (userDetails != null) {
+			User user = userService.getUserByUsername(userDetails.getUsername());
 			notificationService.markAllRead(user);
 		}
 		return navigationService.resolveRedirectURL(session, "previousURL", List.of(), "/notifications");
 	}
 
+	// Đánh dấu một notification là đã đọc
 	@PostMapping("/markAsRead/{id}")
-	public String markAsRead(@PathVariable Long id) {
+	public String markAsRead(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+
 		Notification notification = notificationService.getNotificationById(id);
-		if (notification != null) {
-			notificationService.markAsRead(notification);
+
+		if (notification != null && userDetails != null) {
+			if (notification.getUser().getUsername().equals(userDetails.getUsername())) {
+				notificationService.markAsRead(notification);
+				if (notification.getRedirectLink() != null) {
+					return "redirect:" + notification.getRedirectLink();
+				}
+			}
 		}
-		return "redirect:" + notification.getRedirectLink();
+
+		return "redirect:/notifications";
 	}
 }

@@ -3,7 +3,7 @@ package com.user.steammgmt.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "publisher")
+@Table(name = "publishers")
 public class Publisher {
 	@Id
 	private String publisherId;

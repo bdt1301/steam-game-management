@@ -19,8 +19,10 @@ public class SteamMgmtApplication {
 	CommandLineRunner initUsers(UserRepository repo, PasswordEncoder encoder) {
 		return args -> {
 			if (repo.count() == 0) {
-				repo.save(new User("admin", encoder.encode("admin123"), "ROLE_ADMIN", "Admin", "admin@gmail.com",
+				repo.save(new User("admin", encoder.encode("admin123"), "ROLE_ADMIN", "Admin", "admin@example.com",
 						"/images/default_avatar_admin.jpg"));
+				repo.save(new User("user", encoder.encode("user123"), "ROLE_USER", "User", "user@example.com",
+						"/images/default_avatar_user.jpg"));
 			}
 		};
 	}

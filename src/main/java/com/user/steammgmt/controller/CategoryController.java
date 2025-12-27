@@ -34,7 +34,7 @@ public class CategoryController {
 	@GetMapping
 	public String listCategories(Model model) {
 		model.addAttribute("categories", categoryService.getCategoriesWithDetails());
-		return "/category/categories";
+		return "category/categories";
 	}
 
 	// Hiển thị thông tin chi tiết thể loại
@@ -55,7 +55,7 @@ public class CategoryController {
 		model.addAttribute("games", games);
 		model.addAttribute("allGames", allGames);
 
-		return "/category/category_details";
+		return "category/category_details";
 	}
 
 	// Hiển thị form thêm mới hoặc chỉnh sửa

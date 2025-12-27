@@ -53,9 +53,10 @@
 								<button type="submit" class="btn">
 									<img th:src="${notification.image}" class="notification-image">
 									<div class="notification-content">
-										<p th:text="${notification.message}"></p>
+										<p th:text="${notification.message}" class="notification-message"></p>
 										<span
-											th:text="${#dates.format(notification.createdAt,'dd/MM/yyyy HH:mm')}">
+											th:text="${#dates.format(notification.createdAt,'dd/MM/yyyy HH:mm')}" 
+											class="notification-date">
 										</span>
 									</div>
 								</button>

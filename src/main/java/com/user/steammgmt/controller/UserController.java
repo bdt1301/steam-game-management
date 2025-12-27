@@ -33,7 +33,7 @@ public class UserController {
 	@GetMapping("/users")
 	public String listUsers(Model model) {
 		model.addAttribute("users", userService.getAllUsers());
-		return "users";
+		return "user/users";
 	}
 
 	@GetMapping("/user/delete/{id}")
@@ -57,7 +57,7 @@ public class UserController {
 		model.addAttribute("user", user);
 		model.addAttribute("categories", categoryService.getAllCategories());
 
-		return "/user/user_details";
+		return "user/profile";
 	}
 
 	@PostMapping("/user/addFavoriteGame")

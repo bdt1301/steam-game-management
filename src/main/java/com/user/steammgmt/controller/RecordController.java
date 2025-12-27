@@ -18,6 +18,6 @@ public class RecordController {
 	@GetMapping
 	public String listRecords(Model model) {
 		model.addAttribute("records", recordRepository.findAll());
-		return "records";
+		return "user/records";
 	}
 }
