@@ -37,7 +37,7 @@ public class PublisherController {
 	@GetMapping
 	public String listPublishers(Model model) {
 		model.addAttribute("publishers", publisherService.getPublishersWithDetails());
-		return "/publisher/publishers";
+		return "publisher/publishers";
 	}
 
 	// Hiển thị thông tin chi tiết nhà phát hành
@@ -46,7 +46,7 @@ public class PublisherController {
 		model.addAttribute("categories", categoryService.getAllCategories());
 		model.addAttribute("publisher", publisherService.getPublisherWithDetails(publisherId));
 		model.addAttribute("games", gameService.getGamesByPublisherId(publisherId));
-		return "/publisher/publisher_details";
+		return "publisher/publisher_details";
 	}
 
 	// Hiển thị form thêm mới hoặc chỉnh sửa nhà phát hành
@@ -59,7 +59,7 @@ public class PublisherController {
 		} else {
 			model.addAttribute("publisher", new Publisher());
 		}
-		return "/publisher/add_edit_publisher";
+		return "publisher/add_edit_publisher";
 	}
 
 	// Xử lý form thêm mới nhà phát hành

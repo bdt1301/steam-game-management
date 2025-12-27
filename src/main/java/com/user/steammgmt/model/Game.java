@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "game")
+@Table(name = "games")
 public class Game {
 	@Id
 	private Long appId;
@@ -33,7 +33,7 @@ public class Game {
 	private Publisher publisher;
 
 	@ManyToMany
-	@JoinTable(name = "game_category", joinColumns = @JoinColumn(name = "game_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+	@JoinTable(name = "games_categories", joinColumns = @JoinColumn(name = "game_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private List<Category> categories;
 
 	@ManyToMany(mappedBy = "favoriteGames")

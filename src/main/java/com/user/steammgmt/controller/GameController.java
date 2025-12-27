@@ -47,7 +47,7 @@ public class GameController {
 	public String listGames(Model model) {
 		model.addAttribute("categories", categoryService.getAllCategories());
 		model.addAttribute("games", gameService.getAllGames());
-		return "/game/games";
+		return "game/games";
 	}
 
 	// Hiển thị thông tin chi tiết game
@@ -62,7 +62,7 @@ public class GameController {
 			model.addAttribute("user", user);
 		}
 
-		return "/game/game_details";
+		return "game/game_details";
 	}
 
 	// Hiển thị form thêm mới hoặc chỉnh sửa game

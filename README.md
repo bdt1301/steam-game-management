@@ -5,13 +5,12 @@
 This project was developed and tested using the following **personal development environment**:
 
 ### 🔧 Development Environment
-- Java Development Kit (JDK) **21.0.4**
+- Java Development Kit (JDK) **17.0.12**
 - Apache Maven **3.9.9**
-- Eclipse IDE
-- Spring Tools 4 (Spring Tool Suite 4)
+- Build & Run via Maven/Command Line (jar)
 
 ### 🗄️ Database
-- MySQL Server
+- PostgreSQL Server
 - Database connection configured in `application.properties`
 
 ---
@@ -23,7 +22,7 @@ This project was developed and tested using the following **personal development
 | Frontend | HTML, CSS, JavaScript |
 | UI Framework | Bootstrap |
 | Template Engine | Thymeleaf |
-| Database | MySQL |
+| Database | PostgreSQL |
 
 ---
 
