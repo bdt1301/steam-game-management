@@ -1,5 +1,15 @@
 # 🎮 Steam Game Management Website
 
+## 🌐 Live Demo
+👉 https://steammngt.onrender.com
+
+You can use the following **pre-created accounts** to explore the system features without registration:
+
+| Role  | Username | Password  |
+|-------|----------|-----------|
+| Admin | admin    | admin123  |
+| User  | user     | user123   |
+
 ## ▶️ Project Requirements
 
 This project was developed and tested using the following **personal development environment**:

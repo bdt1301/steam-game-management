@@ -19,7 +19,7 @@ public class Game {
 	@Column(length = 1000)
 	private String aboutDescription;
 
-	@Column(length = 1000)
+	@Column(length = 5000)
 	private String appImage;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

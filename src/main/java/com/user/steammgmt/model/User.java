@@ -26,7 +26,7 @@ public class User {
 	@Column(nullable = false)
 	private String fullName;
 
-	@Column
+	@Column(length = 1000)
 	private String avatarUrl;
 
 	@ManyToMany
