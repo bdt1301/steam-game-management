@@ -80,7 +80,7 @@
 					<div class="dropdown-menu dropdown-menu-right small-dropdown"
 						aria-labelledby="userDropdown">
 						<a class="dropdown-item"
-							th:href="@{/user/details(username=${#authentication.name})}">Profile</a>
+							th:href="@{/profile}">Profile</a>
 						<form th:action="@{/logout}" method="post" style="margin: 0;">
 							<button type="submit" class="dropdown-item">Logout</button>
 						</form>

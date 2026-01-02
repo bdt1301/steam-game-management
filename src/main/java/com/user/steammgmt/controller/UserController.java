@@ -1,6 +1,5 @@
 package com.user.steammgmt.controller;
 
-import com.user.steammgmt.model.User;
 import com.user.steammgmt.service.CategoryService;
 import com.user.steammgmt.service.NavigationService;
 import com.user.steammgmt.service.UserService;
@@ -49,12 +48,11 @@ public class UserController {
 		return "redirect:/users";
 	}
 
-	@GetMapping("/user/details")
-	public String userDetails(@RequestParam("username") String username, Model model) {
+	@GetMapping("/profile")
+	public String userDetails(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+		String username = userDetails.getUsername();
 
-		User user = userService.getUserByUsername(username);
-
-		model.addAttribute("user", user);
+		model.addAttribute("user", userService.getUserByUsername(username));
 		model.addAttribute("categories", categoryService.getAllCategories());
 
 		return "user/profile";
@@ -83,14 +81,14 @@ public class UserController {
 			@AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
 
 		boolean success = userService.updateProfile(userDetails.getUsername(), fullName, email);
-		
+
 		if (success) {
 			redirectAttributes.addFlashAttribute("success", "Profile đã được cập nhật thành công!");
 		} else {
 			redirectAttributes.addFlashAttribute("error", "Email đã được sử dụng bởi tài khoản khác.");
 		}
 
-		return "redirect:/user/details?username=" + userDetails.getUsername();
+		return "redirect:/profile";
 	}
 
 	@PostMapping("/user/change-password")
@@ -100,15 +98,13 @@ public class UserController {
 
 		if (!newPassword.equals(confirmPassword)) {
 			redirectAttributes.addFlashAttribute("error", "Mật khẩu mới không khớp.");
-			return "redirect:/user/details?username=" + userDetails.getUsername();
+		} else {
+			boolean success = userService.changePassword(userDetails.getUsername(), oldPassword, newPassword);
+			redirectAttributes.addFlashAttribute(success ? "success" : "error",
+					success ? "Đổi mật khẩu thành công!" : "Mật khẩu cũ không đúng.");
 		}
 
-		boolean success = userService.changePassword(userDetails.getUsername(), oldPassword, newPassword);
-
-		redirectAttributes.addFlashAttribute(success ? "success" : "error",
-				success ? "Đổi mật khẩu thành công!" : "Mật khẩu cũ không đúng.");
-
-		return "redirect:/user/details?username=" + userDetails.getUsername();
+		return "redirect:/profile";
 	}
 
 }

@@ -39,7 +39,7 @@ public class SecurityConfig {
 				.requestMatchers("/", "/health", "/login", "/register", "/games", "/publishers", "/categories",
 						"/{type}/details/{id}")
 				.permitAll()
-				.requestMatchers("/{type}/new", "/{type}/edit/{id}", "/{type}/delete/{id}", "/users", "records")
+				.requestMatchers("/{type}/new", "/{type}/edit/{id}", "/{type}/delete/{id}", "/users", "/records")
 				.hasRole("ADMIN").anyRequest().authenticated())
 				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/", true).failureUrl("/login?error")
 						.permitAll())
