@@ -18,33 +18,34 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-	@Bean
-	PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Bean
-	DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService,
-			PasswordEncoder passwordEncoder) {
+    @Bean
+    DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
 
-		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		provider.setUserDetailsService(userDetailsService);
-		provider.setPasswordEncoder(passwordEncoder);
-		return provider;
-	}
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
+    }
 
-	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests(auth -> auth.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-				.requestMatchers("/", "/health", "/login", "/register", "/games", "/publishers", "/categories",
-						"/{type}/details/{id}")
-				.permitAll()
-				.requestMatchers("/{type}/new", "/{type}/edit/{id}", "/{type}/delete/{id}", "/users", "/records")
-				.hasRole("ADMIN").anyRequest().authenticated())
-				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/", true).failureUrl("/login?error")
-						.permitAll())
-				.logout(logout -> logout.logoutSuccessUrl("/"));
-		return http.build();
-	}
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/", "/actuator/health", "/actuator/health/**", "/login", "/register", "/games",
+                        "/publishers", "/categories",
+                        "/{type}/details/{id}")
+                .permitAll()
+                .requestMatchers("/{type}/new", "/{type}/edit/{id}", "/{type}/delete/{id}", "/users", "/records")
+                .hasRole("ADMIN").anyRequest().authenticated())
+                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/", true).failureUrl("/login?error")
+                        .permitAll())
+                .logout(logout -> logout.logoutSuccessUrl("/"));
+        return http.build();
+    }
 
 }

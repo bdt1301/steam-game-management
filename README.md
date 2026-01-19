@@ -1,7 +1,7 @@
 # 🎮 Steam Game Management Website
 
 ## 🌐 Live Demo
-👉 https://steammngt.onrender.com
+👉 https://steammgmt.onrender.com
 
 You can use the following **pre-created accounts** to explore the system features without registration:
 
@@ -48,7 +48,7 @@ This project was developed and tested using the following **personal development
 | Category – Game | Many-to-Many |
 | User – Game | Many-to-Many (favorite games) |
 | User – Notification | One-to-Many |
-| Record | Zero-to-Zero (used to log Admin activities) |
+| Record | Used to log all Admin activities |
 
 ---
 
