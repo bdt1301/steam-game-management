@@ -6,6 +6,7 @@ import com.user.steammgmt.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -17,17 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@RequiredArgsConstructor
 public class UserController {
+
 	private final UserService userService;
 	private final CategoryService categoryService;
 	private final NavigationService navigationService;
-
-	public UserController(UserService userService, CategoryService categoryService,
-			NavigationService navigationService) {
-		this.userService = userService;
-		this.categoryService = categoryService;
-		this.navigationService = navigationService;
-	}
 
 	@GetMapping("/users")
 	public String listUsers(Model model) {
@@ -35,7 +31,7 @@ public class UserController {
 		return "user/users";
 	}
 
-	@GetMapping("/user/delete/{id}")
+	@PostMapping("/user/delete/{id}")
 	public String deleteUser(@PathVariable("id") Long userId, HttpServletRequest request, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		try {

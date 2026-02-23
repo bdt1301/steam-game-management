@@ -1,10 +1,15 @@
 package com.user.steammgmt.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 @Entity
 @Table(name = "records")
+@Getter
+@Setter
 public class Record {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,44 +37,4 @@ public class Record {
 		this.actionDate = actionDate;
 	}
 
-	// Getters and Setters
-	public Long getRecordId() {
-		return recordId;
-	}
-
-	public void setRecordId(Long recordId) {
-		this.recordId = recordId;
-	}
-
-	public String getObjectType() {
-		return objectType;
-	}
-
-	public void setObjectType(String objectType) {
-		this.objectType = objectType;
-	}
-
-	public String getObjectId() {
-		return objectId;
-	}
-
-	public void setObjectId(String objectId) {
-		this.objectId = objectId;
-	}
-
-	public String getActionType() {
-		return actionType;
-	}
-
-	public void setActionType(String actionType) {
-		this.actionType = actionType;
-	}
-
-	public Date getActionDate() {
-		return actionDate;
-	}
-
-	public void setActionDate(Date actionDate) {
-		this.actionDate = actionDate;
-	}
 }

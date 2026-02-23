@@ -17,21 +17,16 @@ import com.user.steammgmt.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/notifications")
+@RequiredArgsConstructor
 public class NotificationController {
 
 	private final UserService userService;
 	private final NotificationService notificationService;
 	private final NavigationService navigationService;
-
-	public NotificationController(UserService userService, NotificationService notificationService,
-			NavigationService navigationService) {
-		this.userService = userService;
-		this.notificationService = notificationService;
-		this.navigationService = navigationService;
-	}
 
 	// Hiển thị danh sách notifications
 	@GetMapping
@@ -50,7 +45,7 @@ public class NotificationController {
 	}
 
 	// Đánh dấu tất cả là đã đọc
-	@GetMapping("/markAllRead")
+	@PostMapping("/markAllRead")
 	public String markAllRead(HttpSession session, HttpServletRequest request,
 			@AuthenticationPrincipal UserDetails userDetails) {
 		navigationService.saveURL(session, "previousURL", request.getHeader("Referer"));
@@ -78,4 +73,5 @@ public class NotificationController {
 
 		return "redirect:/notifications";
 	}
+    
 }

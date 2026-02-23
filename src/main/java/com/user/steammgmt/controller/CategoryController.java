@@ -8,6 +8,7 @@ import com.user.steammgmt.service.NavigationService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -17,18 +18,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/categories")
+@RequiredArgsConstructor
 public class CategoryController {
 
 	private final CategoryService categoryService;
 	private final GameService gameService;
 	private final NavigationService navigationService;
-
-	public CategoryController(CategoryService categoryService, GameService gameService,
-			NavigationService navigationService) {
-		this.categoryService = categoryService;
-		this.gameService = gameService;
-		this.navigationService = navigationService;
-	}
 
 	// Hiển thị danh sách thể loại
 	@GetMapping
@@ -102,7 +97,7 @@ public class CategoryController {
 	}
 
 	// Xóa thể loại
-	@GetMapping("/delete/{id}")
+	@PostMapping("/delete/{id}")
 	public String deleteCategory(@PathVariable("id") Long categoryId, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		try {
@@ -131,7 +126,7 @@ public class CategoryController {
 	}
 
 	// Gỡ game khỏi thể loại
-	@GetMapping("/removeGame")
+	@PostMapping("/removeGame")
 	public String removeGameFromCategory(@RequestParam Long categoryId, @RequestParam Long appId,
 			RedirectAttributes redirectAttributes) {
 		try {

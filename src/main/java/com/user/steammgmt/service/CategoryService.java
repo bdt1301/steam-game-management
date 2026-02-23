@@ -6,6 +6,9 @@ import com.user.steammgmt.model.Record;
 import com.user.steammgmt.repository.CategoryRepository;
 import com.user.steammgmt.repository.RecordRepository;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,18 +20,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
 
 	private final RecordRepository recordRepository;
 	private final CategoryRepository categoryRepository;
 	private final GameService gameService;
-
-	public CategoryService(RecordRepository recordRepository, CategoryRepository categoryRepository,
-			GameService gameService) {
-		this.recordRepository = recordRepository;
-		this.categoryRepository = categoryRepository;
-		this.gameService = gameService;
-	}
 
 	// Lấy danh sách tất cả các thể loại game
 	public List<Category> getAllCategories() {
@@ -47,7 +44,7 @@ public class CategoryService {
 	}
 
 	// Lưu hoặc cập nhật một thể loại game
-	public void addCategory(Category category) {
+	public void addCategory(@NonNull Category category) {
 		categoryRepository.save(category);
 		recordRepository.save(new Record("Category", String.valueOf(category.getCategoryId()), "Add", new Date()));
 	}
@@ -63,7 +60,7 @@ public class CategoryService {
 
 	// Lấy thể loại game theo ID
 	@Transactional
-	public Category getCategoryById(Long categoryId) {
+	public Category getCategoryById(@NonNull Long categoryId) {
 		Category category = categoryRepository.findById(categoryId).orElseThrow();
 		Hibernate.initialize(category.getGames());
 		return category;
@@ -71,7 +68,7 @@ public class CategoryService {
 
 	// Xóa thể loại game theo ID
 	@Transactional
-	public void deleteCategory(Long categoryId) {
+	public void deleteCategory(@NonNull Long categoryId) {
 		Category category = categoryRepository.findById(categoryId).orElseThrow();
 		for (Game game : category.getGames()) {
 			game.getCategories().remove(category);
@@ -98,7 +95,7 @@ public class CategoryService {
 
 	// Gỡ game khỏi thể loại
 	@Transactional
-	public void removeGame(Long categoryId, Long appId) {
+	public void removeGame(@NonNull Long categoryId, Long appId) {
 		Category category = categoryRepository.findById(categoryId).orElseThrow();
 		Game game = gameService.getGameById(appId);
 		category.getGames().remove(game);

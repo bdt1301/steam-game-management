@@ -13,18 +13,16 @@ import com.user.steammgmt.model.User;
 import com.user.steammgmt.service.NotificationService;
 import com.user.steammgmt.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalModelAttribute {
 
 	private final UserService userService;
 	private final NotificationService notificationService;
-
-	public GlobalModelAttribute(UserService userService, NotificationService notificationService) {
-		this.userService = userService;
-		this.notificationService = notificationService;
-	}
 
 	@ModelAttribute
 	public void addUserAndNotificationsToModel(Model model, @AuthenticationPrincipal UserDetails userDetails) {
@@ -37,4 +35,5 @@ public class GlobalModelAttribute {
 			model.addAttribute("unreadNotifications", Collections.emptyList());
 		}
 	}
+    
 }

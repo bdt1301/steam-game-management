@@ -1,9 +1,13 @@
 package com.user.steammgmt.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "publishers")
+@Getter
+@Setter
 public class Publisher {
 	@Id
 	private String publisherId;
@@ -37,59 +41,4 @@ public class Publisher {
 		this.publisherImage = publisherImage;
 	}
 
-	public String getPublisherId() {
-		return publisherId;
-	}
-
-	public void setPublisherId(String publisherId) {
-		this.publisherId = publisherId;
-	}
-
-	public String getPublisherName() {
-		return publisherName;
-	}
-
-	public void setPublisherName(String publisherName) {
-		this.publisherName = publisherName;
-	}
-
-	public String getLinkWebsite() {
-		return linkWebsite;
-	}
-
-	public void setLinkWebsite(String linkWebsite) {
-		this.linkWebsite = linkWebsite;
-	}
-
-	public String getPublisherInfo() {
-		return publisherInfo;
-	}
-
-	public void setPublisherInfo(String publisherInfo) {
-		this.publisherInfo = publisherInfo;
-	}
-
-	public String getPublisherImage() {
-		return publisherImage;
-	}
-
-	public void setPublisherImage(String publisherImage) {
-		this.publisherImage = publisherImage;
-	}
-
-	public Game getFeaturedGame() {
-		return featuredGame;
-	}
-
-	public void setFeaturedGame(Game featuredGame) {
-		this.featuredGame = featuredGame;
-	}
-
-	public int getProductQuantity() {
-		return productQuantity;
-	}
-
-	public void setProductQuantity(int productQuantity) {
-		this.productQuantity = productQuantity;
-	}
 }

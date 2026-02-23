@@ -14,7 +14,11 @@ import com.user.steammgmt.repository.GameRepository;
 import com.user.steammgmt.repository.RecordRepository;
 import com.user.steammgmt.repository.UserRepository;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
 	private final UserRepository userRepository;
@@ -22,19 +26,11 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final RecordRepository recordRepository;
 
-	public UserService(UserRepository userRepository, GameRepository gameRepository, PasswordEncoder passwordEncoder,
-			RecordRepository recordRepository) {
-		this.userRepository = userRepository;
-		this.gameRepository = gameRepository;
-		this.passwordEncoder = passwordEncoder;
-		this.recordRepository = recordRepository;
-	}
-
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
 	}
 
-	public User getUserById(Long userId) {
+	public User getUserById(@NonNull Long userId) {
 		return userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 	}
@@ -44,7 +40,7 @@ public class UserService {
 				.orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 	}
 
-	public void deleteUser(Long userId) {
+	public void deleteUser(@NonNull Long userId) {
 		userRepository.deleteById(userId);
 		recordRepository.save(new Record("User", String.valueOf(userId), "Delete", new Date()));
 	}
@@ -95,7 +91,7 @@ public class UserService {
 		return true;
 	}
 
-	public void addFavoriteGame(String username, Long gameId) {
+	public void addFavoriteGame(String username, @NonNull Long gameId) {
 		Optional<User> optionalUser = userRepository.findByUsername(username);
 		Optional<Game> optionalGame = gameRepository.findById(gameId);
 
@@ -108,7 +104,7 @@ public class UserService {
 		}
 	}
 
-	public void removeFavoriteGame(String username, Long gameId) {
+	public void removeFavoriteGame(String username, @NonNull Long gameId) {
 		Optional<User> optionalUser = userRepository.findByUsername(username);
 		Optional<Game> optionalGame = gameRepository.findById(gameId);
 
@@ -120,4 +116,5 @@ public class UserService {
 			userRepository.save(user);
 		}
 	}
+
 }

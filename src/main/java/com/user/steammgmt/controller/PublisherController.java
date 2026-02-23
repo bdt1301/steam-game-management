@@ -8,6 +8,7 @@ import com.user.steammgmt.service.PublisherService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -18,20 +19,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/publishers")
+@RequiredArgsConstructor
 public class PublisherController {
 
 	private final PublisherService publisherService;
 	private final GameService gameService;
 	private final CategoryService categoryService;
 	private final NavigationService navigationService;
-
-	public PublisherController(PublisherService publisherService, GameService gameService,
-			CategoryService categoryService, NavigationService navigationService) {
-		this.publisherService = publisherService;
-		this.gameService = gameService;
-		this.categoryService = categoryService;
-		this.navigationService = navigationService;
-	}
 
 	// Hiển thị danh sách nhà phát hành
 	@GetMapping
@@ -91,7 +85,7 @@ public class PublisherController {
 	}
 
 	// Xóa nhà phát hành
-	@GetMapping("/delete/{id}")
+	@PostMapping("/delete/{id}")
 	public String deletePublisher(@PathVariable("id") String publisherId, HttpServletRequest request,
 			HttpSession session, RedirectAttributes redirectAttributes) {
 		try {

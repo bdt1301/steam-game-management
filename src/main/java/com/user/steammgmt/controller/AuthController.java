@@ -9,14 +9,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.user.steammgmt.model.User;
 import com.user.steammgmt.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @Controller
+@RequiredArgsConstructor
 public class AuthController {
 
 	private final UserService userService;
-
-	public AuthController(UserService userService) {
-		this.userService = userService;
-	}
 
 	@GetMapping("/login")
 	public String loginPage() {
@@ -39,4 +38,5 @@ public class AuthController {
 		}
 		return "redirect:/login";
 	}
+
 }

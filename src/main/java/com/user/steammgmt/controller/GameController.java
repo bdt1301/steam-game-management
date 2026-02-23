@@ -12,6 +12,7 @@ import com.user.steammgmt.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/games")
+@RequiredArgsConstructor
 public class GameController {
 
 	private final GameService gameService;
@@ -32,15 +34,6 @@ public class GameController {
 	private final CategoryService categoryService;
 	private final UserService userService;
 	private final NavigationService navigationService;
-
-	public GameController(GameService gameService, PublisherService publisherService, CategoryService categoryService,
-			UserService userService, NavigationService navigationService) {
-		this.gameService = gameService;
-		this.publisherService = publisherService;
-		this.categoryService = categoryService;
-		this.userService = userService;
-		this.navigationService = navigationService;
-	}
 
 	// Hiển thị danh sách game
 	@GetMapping
@@ -128,7 +121,7 @@ public class GameController {
 	}
 
 	// Xóa game
-	@GetMapping("/delete/{id}")
+	@PostMapping("/delete/{id}")
 	public String deleteGame(@PathVariable("id") Long appId, HttpServletRequest request, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		String currentURL = request.getHeader("Referer");
