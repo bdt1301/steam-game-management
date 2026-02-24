@@ -40,6 +40,14 @@
                     >
                         Change Password
                     </button>
+                    <form
+                        th:action="@{/user/delete-me}"
+                        method="post"
+                        onsubmit="return confirm('Are you sure about that?');"
+                        style="display: inline;"
+                    >
+                        <button type="submit" class="btn btn-danger">Delete Account</button>
+                    </form>
                 </div>
             </div>
 

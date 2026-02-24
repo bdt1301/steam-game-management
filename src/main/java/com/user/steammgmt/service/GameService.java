@@ -12,7 +12,6 @@ import com.user.steammgmt.repository.NotificationRepository;
 import com.user.steammgmt.repository.PublisherRepository;
 import com.user.steammgmt.repository.RecordRepository;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import org.hibernate.Hibernate;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,20 +38,22 @@ public class GameService {
         return gameRepository.findAll();
     }
 
-    public void saveGame(@NonNull Game game) {
+    public void saveGame(Game game) {
         gameRepository.save(game);
     }
 
     // Thêm hoặc cập nhật một game
     public void addGame(Game game, List<Long> categoryIds) {
         String publisherId = game.getPublisher().getPublisherId();
-        Publisher publisher = publisherRepository.findById(Objects.requireNonNull(publisherId)).orElseThrow();
+        Publisher publisher = publisherRepository.findById(publisherId)
+                .orElseThrow(() -> new RuntimeException("Publisher not found: " + publisherId));
         game.setPublisher(publisher);
 
         List<Category> selectedCategories;
         if (categoryIds != null && !categoryIds.isEmpty()) {
             selectedCategories = categoryIds.stream()
-                    .map(categoryId -> categoryRepository.findById(Objects.requireNonNull(categoryId)).orElseThrow())
+                    .map(categoryId -> categoryRepository.findById(categoryId)
+                            .orElseThrow(() -> new RuntimeException("Category not found: " + categoryId)))
                     .collect(Collectors.toList());
         } else {
             selectedCategories = new ArrayList<>();
@@ -91,7 +91,8 @@ public class GameService {
         List<Category> selectedCategories;
         if (categoryIds != null && !categoryIds.isEmpty()) {
             selectedCategories = categoryIds.stream()
-                    .map(categoryId -> categoryRepository.findById(Objects.requireNonNull(categoryId)).orElseThrow())
+                    .map(categoryId -> categoryRepository.findById(categoryId)
+                            .orElseThrow(() -> new RuntimeException("Category not found: " + categoryId)))
                     .collect(Collectors.toList());
         } else {
             selectedCategories = new ArrayList<>();
@@ -104,7 +105,7 @@ public class GameService {
 
     // Lấy game theo ID
     @Transactional
-    public Game getGameById(@NonNull Long appId) {
+    public Game getGameById(Long appId) {
         Game game = gameRepository.findById(appId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid game Id: " + appId));
         Hibernate.initialize(game.getCategories());
@@ -112,7 +113,7 @@ public class GameService {
     }
 
     // Xóa game theo ID
-    public void deleteGame(@NonNull Long appId) {
+    public void deleteGame(Long appId) {
         gameRepository.deleteById(appId);
         recordRepository.save(new Record("Game", String.valueOf(appId), "Delete", new Date()));
     }

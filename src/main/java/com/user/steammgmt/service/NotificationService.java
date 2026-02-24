@@ -4,7 +4,6 @@ import com.user.steammgmt.model.Notification;
 import com.user.steammgmt.model.User;
 import com.user.steammgmt.repository.NotificationRepository;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class NotificationService {
         return notificationRepository.findByUserAndIsReadFalse(user);
     }
 
-    public Notification getNotificationById(@NonNull Long id) {
+    public Notification getNotificationById(Long id) {
         return notificationRepository.findById(id).orElse(null);
     }
 

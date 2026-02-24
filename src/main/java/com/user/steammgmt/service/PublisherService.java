@@ -6,7 +6,6 @@ import com.user.steammgmt.model.Record;
 import com.user.steammgmt.repository.PublisherRepository;
 import com.user.steammgmt.repository.RecordRepository;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -47,7 +46,7 @@ public class PublisherService {
     }
 
     // Lưu hoặc cập nhật một nhà phát hành
-    public void addPublisher(@NonNull Publisher publisher) {
+    public void addPublisher(Publisher publisher) {
         publisherRepository.save(publisher);
         recordRepository.save(new Record("Publisher", String.valueOf(publisher.getPublisherId()), "Add", new Date()));
     }
@@ -63,12 +62,13 @@ public class PublisherService {
     }
 
     // Lấy nhà phát hành theo ID
-    public Publisher getPublisherById(@NonNull String publisherId) {
-        return publisherRepository.findById(publisherId).orElseThrow();
+    public Publisher getPublisherById(String publisherId) {
+        return publisherRepository.findById(publisherId)
+                .orElseThrow(() -> new RuntimeException("Publisher not found: " + publisherId));
     }
 
     // Xóa nhà phát hành theo ID
-    public void deletePublisher(@NonNull String publisherId) {
+    public void deletePublisher(String publisherId) {
         publisherRepository.deleteById(publisherId);
         recordRepository.save(new Record("Publisher", String.valueOf(publisherId), "Delete", new Date()));
     }

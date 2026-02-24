@@ -21,86 +21,102 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class UserController {
 
-	private final UserService userService;
-	private final CategoryService categoryService;
-	private final NavigationService navigationService;
+    private final UserService userService;
+    private final CategoryService categoryService;
+    private final NavigationService navigationService;
 
-	@GetMapping("/users")
-	public String listUsers(Model model) {
-		model.addAttribute("users", userService.getAllUsers());
-		return "user/users";
-	}
+    @GetMapping("/users")
+    public String listUsers(Model model) {
+        model.addAttribute("users", userService.getAllUsers());
+        return "user/users";
+    }
 
-	@PostMapping("/user/delete/{id}")
-	public String deleteUser(@PathVariable("id") Long userId, HttpServletRequest request, HttpSession session,
-			RedirectAttributes redirectAttributes) {
-		try {
-			userService.deleteUser(userId);
-			redirectAttributes.addFlashAttribute("success", "Tài khoản người dùng đã được xóa thành công!");
-		} catch (Exception e) {
-			System.err.println("Error deleting user: " + e.getMessage());
-			redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi xóa tài khoản người dùng!");
-		}
-		return "redirect:/users";
-	}
+    @PostMapping("/user/delete/{id}")
+    public String deleteUser(@PathVariable("id") Long userId, HttpServletRequest request, HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        try {
+            userService.deleteUser(userId);
+            redirectAttributes.addFlashAttribute("success", "Tài khoản người dùng đã được xóa thành công!");
+        } catch (Exception e) {
+            System.err.println("Error deleting user: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi xóa tài khoản người dùng.");
+        }
+        return "redirect:/users";
+    }
 
-	@GetMapping("/profile")
-	public String userDetails(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-		String username = userDetails.getUsername();
+    @PostMapping("/user/delete-me")
+    public String deleteMyAccount(@AuthenticationPrincipal UserDetails userDetails, HttpServletRequest request,
+            HttpSession session, RedirectAttributes redirectAttributes) {
 
-		model.addAttribute("user", userService.getUserByUsername(username));
-		model.addAttribute("categories", categoryService.getAllCategories());
+        try {
+            userService.deleteMyAccount(userDetails.getUsername());
+            request.getSession().invalidate(); // invalidate session (logout)
+            redirectAttributes.addFlashAttribute("success", "Tài khoản của bạn đã được xoá thành công!");
+            return "redirect:/?accountDeleted";
+        } catch (Exception e) {
+            System.err.println("Error deleting user: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi xoá tài khoản.");
+            return "redirect:/profile";
+        }
+    }
 
-		return "user/profile";
-	}
+    @GetMapping("/profile")
+    public String userDetails(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
 
-	@PostMapping("/user/addFavoriteGame")
-	public String addFavoriteGames(@RequestParam Long gameId, @AuthenticationPrincipal UserDetails userDetails) {
+        model.addAttribute("user", userService.getUserByUsername(username));
+        model.addAttribute("categories", categoryService.getAllCategories());
 
-		userService.addFavoriteGame(userDetails.getUsername(), gameId);
-		return "redirect:/games/details/" + gameId;
-	}
+        return "user/profile";
+    }
 
-	@PostMapping("/user/removeFavoriteGame")
-	public String removeFromFavorites(@RequestParam Long gameId, @AuthenticationPrincipal UserDetails userDetails,
-			HttpSession session, HttpServletRequest request) {
+    @PostMapping("/user/addFavoriteGame")
+    public String addFavoriteGames(@RequestParam Long gameId, @AuthenticationPrincipal UserDetails userDetails) {
 
-		navigationService.saveURL(session, "previousURL", request.getHeader("Referer"));
+        userService.addFavoriteGame(userDetails.getUsername(), gameId);
+        return "redirect:/games/details/" + gameId;
+    }
 
-		userService.removeFavoriteGame(userDetails.getUsername(), gameId);
+    @PostMapping("/user/removeFavoriteGame")
+    public String removeFromFavorites(@RequestParam Long gameId, @AuthenticationPrincipal UserDetails userDetails,
+            HttpSession session, HttpServletRequest request) {
 
-		return navigationService.resolveRedirectURL(session, "previousURL", List.of(), "/");
-	}
+        navigationService.saveURL(session, "previousURL", request.getHeader("Referer"));
 
-	@PostMapping("/user/update-profile")
-	public String updateProfile(@RequestParam String fullName, @RequestParam String email,
-			@AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
+        userService.removeFavoriteGame(userDetails.getUsername(), gameId);
 
-		boolean success = userService.updateProfile(userDetails.getUsername(), fullName, email);
+        return navigationService.resolveRedirectURL(session, "previousURL", List.of(), "/");
+    }
 
-		if (success) {
-			redirectAttributes.addFlashAttribute("success", "Profile đã được cập nhật thành công!");
-		} else {
-			redirectAttributes.addFlashAttribute("error", "Email đã được sử dụng bởi tài khoản khác.");
-		}
+    @PostMapping("/user/update-profile")
+    public String updateProfile(@RequestParam String fullName, @RequestParam String email,
+            @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
 
-		return "redirect:/profile";
-	}
+        boolean success = userService.updateProfile(userDetails.getUsername(), fullName, email);
 
-	@PostMapping("/user/change-password")
-	public String changePassword(@RequestParam String oldPassword, @RequestParam String newPassword,
-			@RequestParam String confirmPassword, @AuthenticationPrincipal UserDetails userDetails,
-			RedirectAttributes redirectAttributes) {
+        if (success) {
+            redirectAttributes.addFlashAttribute("success", "Profile đã được cập nhật thành công!");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Email đã được sử dụng bởi tài khoản khác.");
+        }
 
-		if (!newPassword.equals(confirmPassword)) {
-			redirectAttributes.addFlashAttribute("error", "Mật khẩu mới không khớp.");
-		} else {
-			boolean success = userService.changePassword(userDetails.getUsername(), oldPassword, newPassword);
-			redirectAttributes.addFlashAttribute(success ? "success" : "error",
-					success ? "Đổi mật khẩu thành công!" : "Mật khẩu cũ không đúng.");
-		}
+        return "redirect:/profile";
+    }
 
-		return "redirect:/profile";
-	}
+    @PostMapping("/user/change-password")
+    public String changePassword(@RequestParam String oldPassword, @RequestParam String newPassword,
+            @RequestParam String confirmPassword, @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+
+        if (!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Mật khẩu mới không khớp.");
+        } else {
+            boolean success = userService.changePassword(userDetails.getUsername(), oldPassword, newPassword);
+            redirectAttributes.addFlashAttribute(success ? "success" : "error",
+                    success ? "Đổi mật khẩu thành công!" : "Mật khẩu cũ không đúng.");
+        }
+
+        return "redirect:/profile";
+    }
 
 }
