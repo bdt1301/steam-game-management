@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import com.user.steammgmt.model.Notification;
 import com.user.steammgmt.model.User;
+import com.user.steammgmt.model.UserNotification;
 import com.user.steammgmt.service.NotificationService;
 import com.user.steammgmt.service.UserService;
 
@@ -21,19 +21,19 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @RequiredArgsConstructor
 public class GlobalModelAttribute {
 
-	private final UserService userService;
-	private final NotificationService notificationService;
+    private final UserService userService;
+    private final NotificationService notificationService;
 
-	@ModelAttribute
-	public void addUserAndNotificationsToModel(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-		if (userDetails != null) {
-			User user = userService.getUserByUsername(userDetails.getUsername());
-			model.addAttribute("user", user);
-			List<Notification> unreadNotifications = notificationService.getUnreadNotifications(user);
-			model.addAttribute("unreadNotifications", unreadNotifications);
-		} else {
-			model.addAttribute("unreadNotifications", Collections.emptyList());
-		}
-	}
-    
+    @ModelAttribute
+    public void addUserAndNotificationsToModel(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+
+        if (userDetails != null) {
+            User user = userService.getUserByUsername(userDetails.getUsername());
+            model.addAttribute("user", user);
+            List<UserNotification> unreadNotifications = notificationService.getUnreadNotifications(user);
+            model.addAttribute("unreadNotifications", unreadNotifications);
+        } else {
+            model.addAttribute("unreadNotifications", Collections.emptyList());
+        }
+    }
 }

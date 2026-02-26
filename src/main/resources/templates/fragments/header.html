@@ -44,18 +44,18 @@
                             </form>
                         </div>
 
-                        <div th:each="notification : ${unreadNotifications}" class="dropdown-item">
-                            <form th:action="@{/notifications/markAsRead/{id}(id=${notification.id})}" method="post">
+                        <div th:each="un : ${unreadNotifications}" class="dropdown-item">
+                            <form th:action="@{/notifications/markAsRead/{id}(id=${un.notification.id})}" method="post">
                                 <button type="submit" class="btn">
-                                    <img th:src="${notification.image}" class="notification-image" />
                                     <div class="notification-content">
-                                        <p th:text="${notification.message}" class="notification-message"></p>
-                                        <span
-                                            th:text="${#dates.format(notification.createdAt,'dd/MM/yyyy HH:mm')}"
-                                            class="notification-date"
-                                        >
-                                        </span>
+                                        <strong th:text="${un.notification.title}" class="notification-title"></strong>
+                                        <p th:text="${un.notification.message}" class="notification-message"></p>
                                     </div>
+                                    <span
+                                        th:text="${#dates.format(un.notification.createdAt,'dd/MM/yyyy HH:mm')}"
+                                        class="notification-date"
+                                    >
+                                    </span>
                                 </button>
                             </form>
                         </div>
@@ -80,6 +80,9 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-right small-dropdown" aria-labelledby="userDropdown">
                         <a class="dropdown-item" th:href="@{/profile}">Profile</a>
+                        <a sec:authorize="hasRole('ADMIN')" class="dropdown-item" th:href="@{/notifications/new}"
+                            >Send Notification</a
+                        >
                         <form th:action="@{/logout}" method="post" style="margin: 0">
                             <button type="submit" class="dropdown-item">Logout</button>
                         </form>

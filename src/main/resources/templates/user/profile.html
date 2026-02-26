@@ -41,13 +41,15 @@
                         Change Password
                     </button>
                     <form
+                        th:if="${user.role != 'ROLE_ADMIN'}"
                         th:action="@{/user/delete-me}"
                         method="post"
                         onsubmit="return confirm('Are you sure about that?');"
-                        style="display: inline;"
+                        style="display: inline"
                     >
                         <button type="submit" class="btn btn-danger">Delete Account</button>
                     </form>
+                    <span th:if="${user.role == 'ROLE_ADMIN'}" class="btn btn-secondary disabled">Delete Account</span>
                 </div>
             </div>
 

@@ -12,40 +12,40 @@ import java.util.Date;
 @Setter
 public class Notification {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+    @Column(nullable = false)
+    private String title;
 
-	@Column(nullable = false)
-	private String message;
+    @Column(nullable = false)
+    private String message;
 
-	@Column(nullable = false)
-	private String redirectLink;
+    // ROLE_USER, ROLE_ADMIN, ALL
+    @Column(nullable = false)
+    private String targetRole;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
-	
-	@Column(length = 1000)
-	private String image;
+    private String redirectLink;
 
-	private boolean isRead;
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private User createdBy;
 
-	public Notification() {
-		this.createdAt = new Date();
-		this.isRead = false;
-	}
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Date createdAt;
 
-	public Notification(User user, String message, String redirectLink, String image) {
-		this.user = user;
-		this.message = message;
-		this.redirectLink = redirectLink;
-		this.image = image;
-		this.createdAt = new Date();
-		this.isRead = false;
-	}
+    public Notification() {
+        this.createdAt = new Date();
+    }
+
+    public Notification(String message, String redirectLink, String targetRole, User createdBy) {
+        this.message = message;
+        this.redirectLink = redirectLink;
+        this.targetRole = targetRole;
+        this.createdBy = createdBy;
+        this.createdAt = new Date();
+    }
 
 }

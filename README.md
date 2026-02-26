@@ -47,7 +47,7 @@ This project was developed and tested using the following **personal development
 | Publisher – Game | One-to-Many |
 | Category – Game | Many-to-Many |
 | User – Game | Many-to-Many (favorite games) |
-| User – Notification | One-to-Many |
+| User – Notification | Many-to-Many |
 | Record | Used to log all Admin activities |
 
 ---

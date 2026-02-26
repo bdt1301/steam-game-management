@@ -26,7 +26,7 @@ public class UserService {
     private final GameRepository gameRepository;
     private final PasswordEncoder passwordEncoder;
     private final RecordRepository recordRepository;
-
+    
     @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAllUsers() {
         return userRepository.findAll();
