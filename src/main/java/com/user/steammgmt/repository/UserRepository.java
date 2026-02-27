@@ -14,6 +14,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByRole(String role);
 
+    List<User> findByFavoriteGames_AppIdIn(List<Long> gameIds);
+
     boolean existsByEmail(String email);
 
     boolean existsByEmailAndUsernameNot(String email, String username);

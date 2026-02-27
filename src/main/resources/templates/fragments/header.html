@@ -80,9 +80,6 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-right small-dropdown" aria-labelledby="userDropdown">
                         <a class="dropdown-item" th:href="@{/profile}">Profile</a>
-                        <a sec:authorize="hasRole('ADMIN')" class="dropdown-item" th:href="@{/notifications/new}"
-                            >Send Notification</a
-                        >
                         <form th:action="@{/logout}" method="post" style="margin: 0">
                             <button type="submit" class="dropdown-item">Logout</button>
                         </form>

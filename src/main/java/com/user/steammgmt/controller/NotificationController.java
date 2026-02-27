@@ -8,10 +8,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.user.steammgmt.model.Notification;
 import com.user.steammgmt.model.User;
 import com.user.steammgmt.model.UserNotification;
+import com.user.steammgmt.service.GameService;
 import com.user.steammgmt.service.NavigationService;
 import com.user.steammgmt.service.NotificationService;
 import com.user.steammgmt.service.UserService;
@@ -27,6 +29,7 @@ public class NotificationController {
 
     private final UserService userService;
     private final NotificationService notificationService;
+    private final GameService gameService;
     private final NavigationService navigationService;
 
     // Hiển thị danh sách notifications
@@ -46,18 +49,27 @@ public class NotificationController {
 
     @GetMapping("/new")
     public String showForm(Model model) {
+        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("games", gameService.getAllGames());
         model.addAttribute("notification", new Notification());
         return "user/add_notification";
     }
 
     @PostMapping("/new")
     public String createNotification(@ModelAttribute Notification notification,
-            @AuthenticationPrincipal UserDetails userDetails) {
-
-        User user = userService.getUserByUsername(userDetails.getUsername());
-        notification.setCreatedBy(user);
-        notificationService.createAndDispatch(notification);
-        return "redirect:/notifications/new?success";
+            @RequestParam(required = false) List<Long> userIds, @RequestParam(required = false) List<Long> gameIds,
+            @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
+        try {
+            User admin = userService.getUserByUsername(userDetails.getUsername());
+            notification.setCreatedBy(admin);
+            notification.setTargetRole("ROLE_USER");
+            notificationService.createAndDispatch(notification, userIds, gameIds);
+            redirectAttributes.addFlashAttribute("success", "Thông báo đã được gửi thành công!");
+        } catch (Exception e) {
+            System.err.println("Error adding game: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi gửi thông báo!");
+        }
+        return "redirect:/notifications/new";
     }
 
     // Đánh dấu tất cả là đã đọc
@@ -75,19 +87,21 @@ public class NotificationController {
 
     // Đánh dấu 1 notification là đã đọc
     @PostMapping("/markAsRead/{notificationId}")
-    public String markAsRead(@PathVariable Long notificationId, @AuthenticationPrincipal UserDetails userDetails) {
+    public String markAsRead(@PathVariable Long notificationId, @AuthenticationPrincipal UserDetails userDetails,
+            HttpSession session, HttpServletRequest request) {
 
+        navigationService.saveURL(session, "previousURL", request.getHeader("Referer"));
         if (userDetails != null) {
             User user = userService.getUserByUsername(userDetails.getUsername());
             UserNotification userNotification = notificationService.markAsRead(user, notificationId);
             if (userNotification != null) {
                 String redirectLink = userNotification.getNotification().getRedirectLink();
-                if (redirectLink != null) {
+                if (redirectLink != null && !redirectLink.isEmpty()) {
                     return "redirect:" + redirectLink;
                 }
             }
         }
-        return "redirect:/notifications";
+        return navigationService.resolveRedirectURL(session, "previousURL", List.of(), "/notifications");
     }
 
 }

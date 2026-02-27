@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -59,24 +61,29 @@ public class NotificationService {
         userNotificationRepository.saveAll(unreadNotifications);
     }
 
-    public void createAndDispatch(Notification notification) {
+    public void createAndDispatch(Notification notification, List<Long> userIds, List<Long> gameIds) {
 
         notificationRepository.save(notification);
 
-        if (notification.getRedirectLink() == null || notification.getRedirectLink().trim().isEmpty()) {
-            notification.setRedirectLink("/");
-        }
-
-        List<User> users;
-        if (notification.getTargetRole().equals("ALL")) {
-            users = userRepository.findAll();
+        Set<User> users;
+        if (userIds != null && userIds.contains(0L)) {
+            users = new HashSet<>(userRepository.findByRole("ROLE_USER"));
+        } else if (userIds != null && !userIds.isEmpty()) {
+            users = new HashSet<>(userRepository.findAllById(userIds));
         } else {
-            users = userRepository.findByRole(notification.getTargetRole());
+            users = new HashSet<>();
         }
 
-        List<UserNotification> mappings = users.stream()
-                .map(user -> new UserNotification(user, notification))
-                .toList();
+        if (gameIds != null && !gameIds.isEmpty()) {
+            Set<User> usersByGame = new HashSet<>(userRepository.findByFavoriteGames_AppIdIn(gameIds));
+            if (!users.isEmpty()) {
+                users.retainAll(usersByGame);
+            } else {
+                users = usersByGame;
+            }
+        }
+
+        List<UserNotification> mappings = users.stream().map(u -> new UserNotification(u, notification)).toList();
 
         userNotificationRepository.saveAll(mappings);
     }

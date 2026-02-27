@@ -20,6 +20,12 @@
         <main class="container">
             <h1 class="page-title">Users List</h1>
 
+            <div class="toolbar">
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/notifications/new}"
+                    >Send Notification</a
+                >
+            </div>
+
             <table id="users-table" class="normal-table table table-bordered table-striped">
                 <thead>
                     <tr>

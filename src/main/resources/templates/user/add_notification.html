@@ -7,6 +7,8 @@
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+
         <link rel="stylesheet" href="/css/styles.css" />
     </head>
     <body>
@@ -18,7 +20,7 @@
 
             <form th:action="@{/notifications/new}" method="post">
                 <div class="form-group">
-                    <label for="title">Title:</label>
+                    <label for="title">Title</label>
                     <input
                         type="text"
                         id="title"
@@ -30,7 +32,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="message">Meessage:</label>
+                    <label for="message">Message</label>
                     <input
                         type="text"
                         id="message"
@@ -42,7 +44,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="redirectLink">Redirect Link:</label>
+                    <label for="redirectLink">Redirect Link</label>
                     <input
                         type="text"
                         id="redirectLink"
@@ -53,21 +55,23 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="targetRole">Send to:</label>
-                    <select id="targetRole" name="targetRole" class="form-control" required>
-                        <option value="">-- Choose object --</option>
-                        <option value="ROLE_USER">All User</option>
+                    <label for="userIds">Users</label>
+                    <select id="userIds" name="userIds" class="form-control select2" multiple>
+                        <option value="" disabled>Select users</option>
+                        <option value="0">All User</option>
+                        <option th:each="user : ${users}" th:value="${user.userId}" th:text="${user.username}"></option>
                     </select>
                 </div>
 
-                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong>Gửi thông báo thành công!</strong>
-                    <button type="button" class="close" data-dismiss="alert">
-                        <span>&times;</span>
-                    </button>
+                <div class="form-group">
+                    <label for="gameIds">Games</label>
+                    <select id="gameIds" name="gameIds" class="form-control select2" multiple>
+                        <option value="" disabled>Select games</option>
+                        <option th:each="game : ${games}" th:value="${game.appId}" th:text="${game.title}"></option>
+                    </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block">Gửi thông báo</button>
+                <button type="submit" class="btn btn-primary btn-block">Send</button>
             </form>
         </main>
 
@@ -78,5 +82,15 @@
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <script>
+            $(document).ready(function () {
+                $('.select2').select2({
+                    allowClear: true,
+                    placeholder: 'Select options',
+                });
+            });
+        </script>
     </body>
 </html>
