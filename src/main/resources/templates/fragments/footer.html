@@ -1,3 +1,4 @@
 <footer class="footer">
-	<p>Steam Game Management by Huỳnh Thiện Phú</p>
+	<p sec:authorize="hasRole('ADMIN')">Steam Game Management by Huỳnh Thiện Phú</p>
+	<p sec:authorize="!hasRole('ADMIN')">Steam Game Data by Huỳnh Thiện Phú</p>
 </footer>
